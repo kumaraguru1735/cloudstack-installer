@@ -26,17 +26,7 @@ then
 fi
 
 echo -e "
- ██████╗ ███████╗██╗    ██╗ █████╗ ███╗   ██╗███████╗   ███╗   ██╗███████╗██╗  ██╗██████╗  █████╗ 
- ██╔══██╗██╔════╝██║    ██║██╔══██╗████╗  ██║██╔════╝   ████╗  ██║██╔════╝██║  ██║██╔══██╗██╔══██╗ 
- ██║  ██║█████╗  ██║ █╗ ██║███████║██╔██╗ ██║███████╗   ██╔██╗ ██║█████╗  ███████║██████╔╝███████║ 
- ██║  ██║██╔══╝  ██║███╗██║██╔══██║██║╚██╗██║╚════██║   ██║╚██╗██║██╔══╝  ██╔══██║██╔══██╗██╔══██║
- ██████╔╝███████╗╚███╔███╔╝██║  ██║██║ ╚████║███████║   ██║ ╚████║███████╗██║  ██║██║  ██║██║  ██║ 
- ╚═════╝ ╚══════╝ ╚══╝╚══╝ ╚═╝  ╚═╝╚═╝  ╚═══╝╚══════╝   ╚═╝  ╚═══╝╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝  
- "
-echo -e "
 ###################################################################################
-####           This script is written by Dewans Nehra.                        ####
-####           You can contact me at https://dewansnehra.xyz                  ####
 ####           This script is written for Ubuntu 22.04                        ####
 ####           This script will install Cloudstack 4.18                       ####
 ###################################################################################
@@ -49,7 +39,7 @@ GATEWAY=$(ip r | awk '/default/ {print $3}')
 IP=$(ip r | awk '/src/ {print $9}')
 ADAPTER=$(ip link | awk -F: '$0 !~ "lo|vir|wl|^[^0-9]"{print $2;getline}')
 
-HOSTS_CONTENT="127.0.0.1\tlocalhost\n$IP\tdevil.dewansnehra.xyz\tdevil"
+HOSTS_CONTENT="127.0.0.1\tlocalhost\n$IP\tmanagement.vexora.in\tmanagement"
 apt install bridge-utils
 
 
@@ -96,9 +86,7 @@ fi
 netplan apply
 netplan apply
 systemctl restart NetworkManager
-hostnamectl set-hostname devil.dewansnehra.xyz
-
-
+hostnamectl set-hostname management.vexora.in
 
 apt-get install -y openntpd openssh-server sudo vim htop tar intel-microcode bridge-utils mysql-server
 
@@ -106,10 +94,10 @@ UBUNTU_VERSION=$(lsb_release -rs)
 
 if [[ "$UBUNTU_VERSION" == "20."* ]]
 then
-    echo deb [arch=amd64] http://download.cloudstack.org/ubuntu focal 4.18  > /etc/apt/sources.list.d/cloudstack.list
+    echo deb [arch=amd64] http://download.cloudstack.org/ubuntu focal 4.20  > /etc/apt/sources.list.d/cloudstack.list
 elif [[ "$UBUNTU_VERSION" == "22."* ]]
 then
-    echo deb [arch=amd64] http://download.cloudstack.org/ubuntu jammy 4.18  > /etc/apt/sources.list.d/cloudstack.list
+    echo deb [arch=amd64] http://download.cloudstack.org/ubuntu jammy 4.20  > /etc/apt/sources.list.d/cloudstack.list
 else
     echo "Unsupported Ubuntu version. This script supports Ubuntu 20.xx and 22.xx only."
     exit 1
@@ -117,7 +105,6 @@ fi
 
 
 wget -O - http://download.cloudstack.org/release.asc|gpg --dearmor > cloudstack-archive-keyring.gpg
-
 
 mv cloudstack-archive-keyring.gpg /etc/apt/trusted.gpg.d/
 
@@ -143,13 +130,13 @@ echo "
 
 mysql -u root -p -e "
 SELECT user,authentication_string,plugin,host FROM mysql.user;
-ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'dewansnehra';
+ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'vexora';
 use mysql;
 UPDATE user SET plugin='mysql_native_password' WHERE User='root';
 flush privileges;   
 "
 apt-get install -y cloudstack-management cloudstack-usage
-cloudstack-setup-databases devil:devil@localhost --deploy-as=root:dewansnehra
+cloudstack-setup-databases cloud:vexora@localhost --deploy-as=root:vexora
 
 cloudstack-setup-management
 
@@ -169,7 +156,6 @@ mount -t nfs localhost:/export/secondary /mnt/secondary
 echo "
 ###################################################################################
 ####           Thank you for using this script.                                ####
-####       Dewans Nehra -  https://dewansnehra.xyz                             #### 
 ###################################################################################
 "
 
@@ -189,6 +175,5 @@ echo "
 ####           to access the pannel.                                           ####
 ####           Username : admin                                                ####
 ####           Password : password                                             ####
-####           Dewans Nehra -  https://dewansnehra.xyz                         ####
 ###################################################################################
 "
