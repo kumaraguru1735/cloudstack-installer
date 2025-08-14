@@ -176,12 +176,12 @@ sudo apt-get install -y cloudstack-management cloudstack-usage
    Run the following command to set the root password and enable the `mysql_native_password` plugin:
 
    ```sh
-   mysql -u root -p -e "
-   SELECT user,authentication_string,plugin,host FROM mysql.user;
-   ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'vexora';
-   UPDATE user SET plugin='mysql_native_password' WHERE User='root';
-   FLUSH PRIVILEGES;
-   "
+    mysql -u root -p -e "
+    SELECT user,authentication_string,plugin,host FROM mysql.user;
+    ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'vexora';
+    UPDATE mysql.user SET plugin='mysql_native_password' WHERE User='root';
+    FLUSH PRIVILEGES;
+    "
    ```
 
 3. **Set Up the CloudStack Database**
