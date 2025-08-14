@@ -71,21 +71,37 @@ Configure Netplan (update `$ADAPTER`, `$IP`, `$GATEWAY`):
 sudo nano /etc/netplan/50-cloud-init.yaml
 # Example configuration:
 network:
-    version: 2
-    renderer: networkd
     ethernets:
-        $ADAPTER:
+        eth0:
             dhcp4: no
             dhcp6: no
+
+    vlans:
+        vlan2:
+            id: 2
+            link: eth0
+            dhcp4: no
+            dhcp6: no
+
     bridges:
+        #FOR MANAGEMENT TRAFFIC
         br0:
-            interfaces: [$ADAPTER]
+            interfaces: [eth0]
             dhcp4: no
             dhcp6: no
-            addresses: [$IP/24]
+            addresses: [$PUBLIC_IP/27]
             gateway4: $GATEWAY
             nameservers:
                 addresses: [8.8.8.8, 8.8.4.4]
+
+        #FOR STORAGE TRAFFIC
+        br1: 
+            interfaces: [vlan2]
+            dhcp4: no
+            dhcp6: no
+            addresses: [192.168.100.2/24]
+
+    version: 2
 ```
 
 Apply changes:
